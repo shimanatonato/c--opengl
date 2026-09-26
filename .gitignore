@@ -6,4 +6,3 @@ Cat/Cat.vcxproj.user
 memo.txt
 Cat/src/libraries/tiny_obj_loader.cc
 Cat/data/video_default.mp4
-Cat/src/vision/
