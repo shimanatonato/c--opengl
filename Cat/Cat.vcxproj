@@ -19,11 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="libraries\glad\src\glad.c" />
+    <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Cat.cpp" />
+    <ClCompile Include="src\game\TargetCircle.cpp" />
     <ClCompile Include="src\graphics\Mesh.cpp" />
     <ClCompile Include="src\graphics\Shader.cpp" />
     <ClCompile Include="src\graphics\ZBufferRenderer.cpp" />
-    <ClCompile Include="src\libraries\glad\src\glad.c" />
     <ClCompile Include="src\utils\geometry.cpp" />
     <ClCompile Include="src\utils\load_file.cpp">
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdcpp17</LanguageStandard>
@@ -35,17 +37,19 @@
     <ClCompile Include="src\vision\VideoCaptureWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="libraries\tiny_obj_loader.h" />
+    <ClInclude Include="src\App.h" />
     <ClInclude Include="src\file_path.h" />
     <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\game\TargetCircle.h" />
     <ClInclude Include="src\graphics\Mesh.h" />
     <ClInclude Include="src\graphics\RenderObject.h" />
     <ClInclude Include="src\graphics\Shader.h" />
     <ClInclude Include="src\graphics\ZBufferRenderer.h" />
-    <ClInclude Include="src\libraries\glad\include\glad\glad.h" />
-    <ClInclude Include="src\libraries\glad\include\KHR\khrplatform.h" />
-    <ClInclude Include="src\libraries\tiny_obj_loader.h" />
     <ClInclude Include="src\utils\geometry.h" />
     <ClInclude Include="src\utils\load_file.h" />
+    <ClInclude Include="src\utils\random.h" />
+    <ClInclude Include="src\vision\MouseInput.h" />
     <ClInclude Include="src\vision\OpticalFlowPoint.h" />
     <ClInclude Include="src\vision\VideoCaptureWrapper.h" />
   </ItemGroup>
@@ -113,9 +117,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);C:\tools\opencv\build\include;C:\tools\OpenGL\include;$(ProjectDir)src/libraries/glad/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)libraries;$(ProjectDir);C:\tools\opencv\build\include;C:\tools\OpenGL\include;$(ProjectDir)libraries/glad/include</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp23</LanguageStandard>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,9 +139,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);C:\tools\opencv\build\include;C:\tools\OpenGL\include;$(ProjectDir)src/libraries/glad/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)libraries;$(ProjectDir);C:\tools\opencv\build\include;C:\tools\OpenGL\include;$(ProjectDir)libraries/glad/include</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp23</LanguageStandard>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,9 +161,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);C:\tools\opencv\build\include;C:\tools\OpenGL\include;$(ProjectDir)src/libraries/glad/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)libraries;$(ProjectDir);C:\tools\opencv\build\include;C:\tools\OpenGL\include;$(ProjectDir)libraries/glad/include</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp23</LanguageStandard>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,9 +183,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);C:\tools\opencv\build\include;C:\tools\OpenGL\include;$(ProjectDir)src/libraries/glad/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)libraries;$(ProjectDir);C:\tools\opencv\build\include;C:\tools\OpenGL\include;$(ProjectDir)libraries/glad/include</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp23</LanguageStandard>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

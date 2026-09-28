@@ -30,8 +30,8 @@ ZBufferRenderer::ZBufferRenderer(int width, int height,bool visiblity)
     glViewport(0, 0, m_width, m_height);  // 画面ピクセルサイズを設定
 
     // シェーダープログラムを読み込み
-    m_shader.load(vertex_src_path, fragment_src_path);
-    m_bg_shader.load(bg_vertex_src_path, bg_fragment_src_path);
+    m_shader.load(FilePath::VERTEX_SRC_PATH, FilePath::FRAGMENT_SRC_PATH);
+    m_bg_shader.load(FilePath::BG_VERTEX_SRC_PATH, FilePath::BG_FRAGMENT_SRC_PATH);
     
     // 背景テクスチャ設定
     glGenTextures(1, &m_bg_texture_id);
@@ -117,4 +117,26 @@ cv::Mat ZBufferRenderer::draw_scene(cv::Mat background, const std::vector<Render
     cv::flip(res_image,res_image,0);
     glfwSwapBuffers(m_window);
     return res_image;
+};
+
+ZBufferRenderer::~ZBufferRenderer(){
+    // 背景のVBO,VAOの削除（その他物体はMeshクラスのデストラクタで削除）
+    if (m_bg_vbo != 0) {
+        glDeleteBuffers(1, &m_bg_vbo);
+        m_bg_vbo = 0;
+    }
+    if (m_bg_vao != 0) {
+        glDeleteVertexArrays(1, &m_bg_vao);
+        m_bg_vao = 0;
+    }
+    // テクスチャの削除
+    if (m_bg_texture_id != 0) {
+        glDeleteTextures(1, &m_bg_texture_id);
+        m_bg_texture_id = 0;
+    }
+    // GLFWウィンドウの破棄
+    if (m_window != nullptr) {
+        glfwDestroyWindow(m_window);
+        m_window = nullptr;
+    }
 };

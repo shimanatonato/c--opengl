@@ -28,8 +28,7 @@ void VideoCaptureWrapper::Initialize(){
         return;
     }
     // 画像サイズを設定
-    m_width = m_buffer.cols;
-    m_height = m_buffer.rows;
+    m_img_size = m_buffer.size();
     m_is_ready.store(true);
     // フレームの更新スレッドの開始
     m_thread=std::thread(&VideoCaptureWrapper::Update,this);
@@ -60,7 +59,7 @@ void VideoCaptureWrapper::Update(){
     float frame_delay;
     // 動画の場合、FPSに合わせる（FPSが取得できない場合は30FPSとする）
     if(m_is_video){
-        float fps = m_capture.get(cv::CAP_PROP_FPS);
+        float fps = static_cast<float>(m_capture.get(cv::CAP_PROP_FPS));
         if(fps>0) frame_delay=1.0f/fps;
         else frame_delay=1.0f/30.0f;
     }
@@ -112,7 +111,7 @@ void VideoCaptureWrapper::Update(){
         }
     }
 };  
-// 取得フレームを読み出し可能かどうか
+// 未読の取得フレームを読み出し可能かどうか
 bool VideoCaptureWrapper::IsReady() const{
     return m_is_ready.load();
 };
@@ -127,4 +126,8 @@ bool VideoCaptureWrapper::Read(cv::Mat& out_img){
     m_buffer.copyTo(out_img);  // 出力配列へコピー
     m_is_ready.store(false);  // フレーム出力済み
     return true;
+};
+// 画像サイズ出力
+cv::Size VideoCaptureWrapper::GetImageSize() const{
+    return m_img_size;
 };

@@ -10,9 +10,16 @@
 #include "src/utils/geometry.h"
 #include "src/utils/load_file.h"
 #include "src/graphics/ZBufferRenderer.h"
+#include "src/App.h"
 #include "src/config.h"
 #include "src/file_path.h"
-using namespace std;
+#include "src/vision/OpticalFlowPoint.h"
+#include "src/vision/VideoCaptureWrapper.h"
+#include "src/vision/MouseInput.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 void __init__() {
     
@@ -20,6 +27,17 @@ void __init__() {
 
 int main()
 {
+	#ifdef _WIN32
+		// どのWindows環境でexeを実行してもコンソールをUTF-8表示にする
+		SetConsoleOutputCP(CP_UTF8);
+		SetConsoleCP(CP_UTF8);
+	#endif
+	cv::utils::logging::setLogLevel(cv::utils::logging::LOG_LEVEL_SILENT);
+	App app;
+	app.Run();
+
+	
+	/*
 	if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
         return -1;
@@ -27,9 +45,9 @@ int main()
 	
 	// モデルの読み込み
 	std::vector<std::string> obj_paths{
-		object_head_path,
-		object_leye_path,
-		object_reye_path,
+		FilePath::OBJECT_HEAD_PATH,
+		FilePath::OBJECT_LEYE_PATH,
+		FilePath::OBJECT_REYE_PATH,
 	};
 	std::vector<std::vector<load_file::Vertex>> out_vertice;
 	std::vector<std::vector<uint32_t>> out_indice;
@@ -41,7 +59,7 @@ int main()
 		std::vector<load_file::Vertex> v;
 		std::vector<uint32_t> i;
 		glm::vec3 size;
-		load_file::load_mesh(path, mtl_dir, v, i, size);
+		load_file::load_mesh(path, FilePath::MTL_DIR, v, i, size);
 
 		out_vertice.push_back(std::move(v));
 		out_indice.push_back(std::move(i));
@@ -111,6 +129,6 @@ int main()
 	cv::waitKey(0); // キー入力待ち
 
 	cv::destroyAllWindows(); // すべてのウィンドウを閉じる
-	glfwTerminate();
+	glfwTerminate();*/
 	return 0;
 }

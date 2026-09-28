@@ -1,7 +1,12 @@
 // TinyObjLoaderによるファイルの読み込み処理
 // TinyObjLoaderのためにC++のバージョンはv.17に設定
+
+#pragma warning(push, 0)
+#pragma warning(disable: 26495 26498 6287)
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "src/libraries/tiny_obj_loader.h"
+#include <tiny_obj_loader.h>
+#pragma warning(pop)
+
 #include "load_file.h"
 #include <iostream>
 #include <limits>

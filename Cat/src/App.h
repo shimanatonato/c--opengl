@@ -1,0 +1,107 @@
+﻿#pragma once
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <vector>
+#include <ranges>
+#include <opencv2/opencv.hpp>
+#include <chrono>
+
+#include "src/utils/geometry.h"
+#include "src/utils/load_file.h"
+#include "src/graphics/ZBufferRenderer.h"
+#include "src/config.h"
+#include "src/file_path.h"
+#include "src/vision/OpticalFlowPoint.h"
+#include "src/vision/VideoCaptureWrapper.h"
+#include "src/vision/MouseInput.h"
+#include "src/game/TargetCircle.h"
+
+class App{
+    private:
+        std::string m_window_name=Config::WINDOW_NAME;
+        bool m_is_exit=false;
+        
+        Config::Mode m_mode=Config::Mode::Video;
+        bool m_is_read_target_file=false;  // ターゲット位置をファイルから読み込むか
+        bool m_is_use_capture=false;
+        bool m_is_use_mouse=false;
+        bool m_is_use_game=false;
+
+        cv::Size m_image_size;
+        glm::mat4x4 m_proj_mtx{1.0f};
+        glm::mat4x4 m_view_mtx{1.0f};
+        std::vector<std::vector<load_file::Vertex>> m_out_vertice;
+        std::vector<std::vector<uint32_t>> m_out_indice;
+        float m_scale= 1.0f;
+        glm::mat4 m_scale_mat{1.0f};
+        glm::mat4 m_offset_head{1.0f};
+        
+        std::vector<Mesh> m_meshes;  // 3Dメッシュ
+        std::vector<RenderObject> m_objs;  // 3Dメッシュとモデル行列の対応
+
+        cv::Mat m_previmg_gray;
+        cv::Mat m_fullimg_gray;
+        cv::Mat m_nextimg_gray;
+        cv::Mat m_showimg;
+        cv::Point2f m_focus_px;
+        cv::Point2f m_head_px;
+        cv::Point2f m_eye_px;
+        int m_radius_watch_pt=10;
+        cv::Scalar m_color_watch_pt{0,0,255};
+
+        std::unique_ptr<ZBufferRenderer> m_zbuf_renderer;
+        //CatController m_cat_controller;
+        Game::TargetCircle m_target_circle;
+        OpticalFlowPoint m_opt_flow;
+        MouseInput m_mouse_input;
+        std::unique_ptr<VideoCaptureWrapper> m_video_capture;
+
+        bool m_is_running = true;
+    public:
+        App() = default;
+
+        // メインエントリーポイント
+        void Run(){
+            SelectMode();
+            // リソース初期化
+            if (!InitResources()) {
+                std::cerr << "[Error] Failed to initialize App resources." << std::endl;
+                return;
+            }
+
+            // 時間計測の初期化
+            auto last_time = std::chrono::high_resolution_clock::now();
+
+            // メインループ
+            while (!m_is_exit) {
+                // 前フレームからの時間差dtの計算
+                auto current_time = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<float> delta_time = current_time - last_time;
+                float dt = delta_time.count();
+                last_time = current_time;
+
+                // メイン処理の実行
+                ProcessInput();  // 入力
+                Update(dt);  // 処理
+                Render();  // 出力
+
+                // キー入力判定 ---
+                // ESCキー（27）が押されたらループを抜ける
+                int key = cv::waitKey(1);
+                if (key == 27) {
+                    m_is_exit = true;
+                }
+            }
+        };
+        // モード選択
+        void SelectMode();
+        // カメラパラメータ、OBJモデル、ウィンドウ、ターゲット情報の初期化
+        bool InitResources();
+        // 入力（フレーム、マウス位置、オプティカルフロー）処理
+        void ProcessInput();
+        // 回転計算、ターゲット判定
+        void Update(float dt);
+        // 3Dレンダリング、2D描画、imshow
+        void Render();
+};

@@ -2,13 +2,18 @@
 #pragma once
 #include <string>
 
-inline std::string object_head_path = "data/cat_head.obj";  // objファイルのパス
-inline std::string object_leye_path = "data/cat_leye.obj";  // objファイルのパス
-inline std::string object_reye_path = "data/cat_reye.obj";  // objファイルのパス
-inline std::string mtl_dir = "data/";  // mtlファイルの場所
+namespace FilePath{
+    inline const std::string VIDEO_SOURCE = "data/video_default.mp4";  // 動画ファイルのパス
+    inline const std::string TARGET_SOURCE = "data/target_default.csv";  // ターゲットファイルのパス
 
-inline std::string vertex_src_path="src/graphics/object.vert";
-inline std::string fragment_src_path="src/graphics/object.frag";
+    inline const std::string OBJECT_HEAD_PATH = "data/cat_head.obj";  // objファイルのパス
+    inline const std::string OBJECT_LEYE_PATH = "data/cat_leye.obj";  // objファイルのパス
+    inline const std::string OBJECT_REYE_PATH = "data/cat_reye.obj";  // objファイルのパス
+    inline const std::string MTL_DIR = "data/";  // mtlファイルの場所
 
-inline std::string bg_vertex_src_path="src/graphics/bg.vert";
-inline std::string bg_fragment_src_path="src/graphics/bg.frag";
+    inline const std::string VERTEX_SRC_PATH="src/graphics/object.vert";
+    inline const std::string FRAGMENT_SRC_PATH="src/graphics/object.frag";
+
+    inline const std::string BG_VERTEX_SRC_PATH="src/graphics/bg.vert";
+    inline const std::string BG_FRAGMENT_SRC_PATH="src/graphics/bg.frag";
+}
