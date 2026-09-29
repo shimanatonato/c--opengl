@@ -3,7 +3,7 @@
 
 namespace geometry {
     // 回転角度から回転行列を作成
-    glm::mat4 create_rotmtx_from_arg(float y, float p, float r) {
+    glm::mat4 create_rot_matrix_from_arg(float y, float p, float r) {
         glm::mat3 yaw(0.0f), pitch(0.0f), roll(0.0f);
         float yc = glm::cos(y); float ys = glm::sin(y);
         float pc = glm::cos(p); float ps = glm::sin(p);
@@ -24,7 +24,7 @@ namespace geometry {
     };
 
     // center中心にrotの回転を加えた回転行列を作成
-    glm::mat4 rot_around_matrix(const glm::mat4& rot, const glm::vec3& center) {
+    glm::mat4 create_rot_matrix_around(const glm::mat4& rot, const glm::vec3& center) {
         glm::mat4 t_plus(1.0f);  // 回転後の平行移動
         glm::mat4 t_minus(1.0f);  // 回転前の平行移動
 
@@ -39,8 +39,20 @@ namespace geometry {
         return t_plus * rot * t_minus;
     };
 
+    // 点から点を見つめる回転行列を作成
+    glm::mat4 create_rot_matrix_look_at(const glm::vec3 from_pt,const glm::vec3 to_pt){
+        glm::vec3 dir = to_pt-from_pt;
+        
+        // ヨー(Y軸回転)、ピッチ(X軸回転)
+        float yaw   = std::atan2(dir.x, dir.z);
+        float pitch = std::atan2(dir.y, dir.z);
+
+        // 回転行列を返す
+        return geometry::create_rot_matrix_from_arg(yaw, -pitch, 0.0f);
+    };
+
     // 拡大・縮小の行列の作成
-    glm::mat4 scale_matrix(float scale) {
+    glm::mat4 create_scale_matrix(float scale) {
         glm::mat4 mat(scale);
         mat[3][3] = 1.0f;
         return mat;

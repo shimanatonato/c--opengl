@@ -29,8 +29,8 @@ class App{
         bool m_is_use_game=false;
 
         cv::Size m_image_size;
-        glm::mat4x4 m_proj_mtx{1.0f};
-        glm::mat4x4 m_view_mtx{1.0f};
+        glm::mat4 m_proj_mat{1.0f};
+        glm::mat4 m_view_mat{1.0f};
         std::vector<std::vector<load_file::Vertex>> m_out_vertice;
         std::vector<std::vector<uint32_t>> m_out_indice;
         float m_scale= 1.0f;

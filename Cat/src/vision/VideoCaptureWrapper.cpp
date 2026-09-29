@@ -95,7 +95,7 @@ void VideoCaptureWrapper::Update(){
 
         // 取得フレームの更新
         {
-            std::lock_guard<std::mutex> lock{m_mtx_write};
+            std::lock_guard<std::mutex> lock{m_mat_write};
             m_buffer=temp_frame;
             m_is_ready.store(true);  // 取得フレームを読み出し可能
         }
@@ -118,7 +118,7 @@ bool VideoCaptureWrapper::IsReady() const{
 // 取得フレームの読み出し
 bool VideoCaptureWrapper::Read(cv::Mat& out_img){
     // フレームを読み込めるようになる、または動画・カメラが閉じるまで待機
-    std::unique_lock<std::mutex> uniq_lk(m_mtx_write);
+    std::unique_lock<std::mutex> uniq_lk(m_mat_write);
     m_cond.wait(uniq_lk, [this]{ return m_is_ready.load()||m_cancel.load();});
     // 動画・カメラが閉じていた場合false
     if(!m_is_ready.load()||m_cancel.load()) return false;

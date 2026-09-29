@@ -141,7 +141,7 @@ bool App::InitResources(){
 	// 投影行列（カメラ内部パラメータ）
 	float cx = static_cast<float>(m_image_size.width/2.0f);
 	float cy = static_cast<float>(m_image_size.height/2.0f);
-	m_proj_mtx = geometry::create_projection_matrix(
+	m_proj_mat = geometry::create_projection_matrix(
 		Config::FOCAL/Config::PIXEL_WIDTH, Config::FOCAL/Config::PIXEL_WIDTH,
 		cx, cy, 
 		static_cast<float>(m_image_size.width), static_cast<float>(m_image_size.height), 
@@ -149,10 +149,10 @@ bool App::InitResources(){
 	);
 
 	// ビュー行列（カメラ外部パラメータ）
-	glm::mat4 camera_rot = geometry::create_rotmtx_from_arg(Config::CAMERA_H, Config::CAMERA_P, Config::CAMERA_R);
-	m_view_mtx = geometry::create_view_matrix(camera_rot, Config::CAMERA_POSITION);
+	glm::mat4 camera_rot = geometry::create_rot_matrix_from_arg(Config::CAMERA_H, Config::CAMERA_P, Config::CAMERA_R);
+	m_view_mat = geometry::create_view_matrix(camera_rot, Config::CAMERA_POSITION);
 
-    m_zbuf_renderer->set_camera(m_proj_mtx, m_view_mtx);
+    m_zbuf_renderer->set_camera(m_proj_mat, m_view_mat);
 
 
     // ◆後でCatControllerに移植する
@@ -160,13 +160,13 @@ bool App::InitResources(){
     // 目の中心にスケールや頭の回転を適用
     glm::vec3 abs_center_leye=Config::LEFT_EYE_CENTER_ABS*m_scale;
     glm::vec3 abs_center_reye=Config::RIGHT_EYE_CENTER_ABS*m_scale;
-	glm::mat4 rot_head = geometry::create_rotmtx_from_arg(0.0f, glm::radians(180.0f),0.0f);  // 頭の回転
+	glm::mat4 rot_head = geometry::create_rot_matrix_from_arg(0.0f, glm::radians(180.0f),0.0f);  // 頭の回転
 	glm::vec3 center_leye=glm::vec3{rot_head*glm::vec4{abs_center_leye,1.0f}};
 	glm::vec3 center_reye=glm::vec3{rot_head*glm::vec4{abs_center_reye,1.0f}};
 	// モデル行列の作成
-	glm::mat4 model_head = geometry::rot_around_matrix(rot_head, glm::vec3(0.0f))*m_scale_mat*m_offset_head;
-	glm::mat4 model_leye = geometry::rot_around_matrix(glm::mat4(1.0f),center_leye)*model_head;
-	glm::mat4 model_reye = geometry::rot_around_matrix(glm::mat4(1.0f),center_reye)*model_head;
+	glm::mat4 model_head = geometry::create_rot_matrix_around(rot_head, glm::vec3(0.0f))*m_scale_mat*m_offset_head;
+	glm::mat4 model_leye = geometry::create_rot_matrix_around(glm::mat4(1.0f),center_leye)*model_head;
+	glm::mat4 model_reye = geometry::create_rot_matrix_around(glm::mat4(1.0f),center_reye)*model_head;
 	std::vector<glm::mat4> models{model_head,model_leye,model_reye};
 	for (size_t i = 0; i < m_out_vertice.size(); ++i) {
 		m_meshes.emplace_back(m_out_vertice[i], m_out_indice[i]);

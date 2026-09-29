@@ -15,7 +15,7 @@ class VideoCaptureWrapper
         bool m_is_video;  // 動画かカメラか
         cv::Mat m_buffer;  // フレーム画像
         std::atomic<bool> m_is_ready = false;  // 未読の取得フレームを読み出し可能かどうか
-        std::mutex m_mtx_write;  // m_buffer, m_readyの読み書きの管理
+        std::mutex m_mat_write;  // m_buffer, m_readyの読み書きの管理
         std::condition_variable m_cond;  // 読み出し可能になるまでの待機処理の管理
         std::atomic<bool> m_cancel{false};  // 終了判定
         // フレームの更新
