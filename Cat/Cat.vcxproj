@@ -22,6 +22,7 @@
     <ClCompile Include="libraries\glad\src\glad.c" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Cat.cpp" />
+    <ClCompile Include="src\game\CatController.cpp" />
     <ClCompile Include="src\game\TargetCircle.cpp" />
     <ClCompile Include="src\graphics\Mesh.cpp" />
     <ClCompile Include="src\graphics\Shader.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="src\App.h" />
     <ClInclude Include="src\file_path.h" />
     <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\game\CatController.h" />
     <ClInclude Include="src\game\TargetCircle.h" />
     <ClInclude Include="src\graphics\Mesh.h" />
     <ClInclude Include="src\graphics\RenderObject.h" />

@@ -80,7 +80,7 @@ bool App::InitResources(){
     if (m_is_use_mouse){
         m_mouse_input.RegisterWindow(m_window_name);
     }
-    // ◆CatControllerを実装したらここでサイズ設定？
+
     m_focus_px={m_image_size.width/2.0f,m_image_size.height/2.0f};
     m_head_px={m_image_size.width/2.0f,m_image_size.height/2.0f};
     m_eye_px={m_image_size.width/2.0f,m_image_size.height/2.0f};
@@ -101,6 +101,9 @@ bool App::InitResources(){
         std::cerr << "[Error] GLFWの初期化に失敗しました" << std::endl;
         return false;
     }
+    
+    // 3D描画設定
+    m_zbuf_renderer=std::make_unique<ZBufferRenderer>(m_image_size.width, m_image_size.height,false);
 
     // モデルの読み込み
 	std::vector<std::string> obj_paths{  // モデルのパス
@@ -123,21 +126,21 @@ bool App::InitResources(){
 		m_out_vertice.push_back(std::move(v));
 		m_out_indice.push_back(std::move(i));
 		sizes.push_back(size);
+
 	}
 	m_meshes.reserve(m_out_vertice.size());
 	m_objs.reserve(m_meshes.size());
 
-    // ◆後でCatControllerに移植する
+    std::vector<glm::mat4> models{glm::mat4{1.0f},glm::mat4{1.0f},glm::mat4{1.0f}};
+	for (size_t i = 0; i < m_out_vertice.size(); ++i) {
+		m_meshes.emplace_back(m_out_vertice[i], m_out_indice[i]);
+		m_objs.emplace_back(&m_meshes.back(), models[i]);
+	}
+    
 	// 3Dモデルのスケールの決定
 	m_scale = Config::FINAL_HEAD_WIDTH/sizes[0][0];
-	m_scale_mat = geometry::scale_matrix(m_scale);
-	// 頭を世界座標の中心に合わせるためのオフセット
-	m_offset_head=geometry::create_view_matrix(glm::mat4(1.0f),Config::HEAD_CENTER);
+    m_cat_controller.setScale(m_scale);
 
-
-    // 3D描画設定
-    m_zbuf_renderer=std::make_unique<ZBufferRenderer>(m_image_size.width, m_image_size.height,false);
-    
 	// 投影行列（カメラ内部パラメータ）
 	float cx = static_cast<float>(m_image_size.width/2.0f);
 	float cy = static_cast<float>(m_image_size.height/2.0f);
@@ -154,24 +157,6 @@ bool App::InitResources(){
 
     m_zbuf_renderer->set_camera(m_proj_mat, m_view_mat);
 
-
-    // ◆後でCatControllerに移植する
-
-    // 目の中心にスケールや頭の回転を適用
-    glm::vec3 abs_center_leye=Config::LEFT_EYE_CENTER_ABS*m_scale;
-    glm::vec3 abs_center_reye=Config::RIGHT_EYE_CENTER_ABS*m_scale;
-	glm::mat4 rot_head = geometry::create_rot_matrix_from_arg(0.0f, glm::radians(180.0f),0.0f);  // 頭の回転
-	glm::vec3 center_leye=glm::vec3{rot_head*glm::vec4{abs_center_leye,1.0f}};
-	glm::vec3 center_reye=glm::vec3{rot_head*glm::vec4{abs_center_reye,1.0f}};
-	// モデル行列の作成
-	glm::mat4 model_head = geometry::create_rot_matrix_around(rot_head, glm::vec3(0.0f))*m_scale_mat*m_offset_head;
-	glm::mat4 model_leye = geometry::create_rot_matrix_around(glm::mat4(1.0f),center_leye)*model_head;
-	glm::mat4 model_reye = geometry::create_rot_matrix_around(glm::mat4(1.0f),center_reye)*model_head;
-	std::vector<glm::mat4> models{model_head,model_leye,model_reye};
-	for (size_t i = 0; i < m_out_vertice.size(); ++i) {
-		m_meshes.emplace_back(m_out_vertice[i], m_out_indice[i]);
-		m_objs.emplace_back(&m_meshes.back(), models[i]);
-	}
     return true;
 };
 // 入力（フレーム、マウス位置、オプティカルフロー）処理
@@ -216,29 +201,38 @@ void App::ProcessInput(){
 };
 // 回転計算、ターゲット判定
 void App::Update(float dt){
+    // 注目画素決定
     m_head_px=m_head_px+(m_focus_px-m_head_px)*dt*Config::HEAD_SPEED;
     m_eye_px=m_eye_px+(m_focus_px-m_eye_px)*dt*Config::EYE_SPEED;
+    // ターゲットの更新
     m_target_circle.Update(dt,m_eye_px);
-    
+    // 3Dモデルの姿勢の決定
+    CatPose cat_pose=m_cat_controller.CalcCatPose(m_head_px,m_eye_px,m_image_size);
+    m_objs[0].model_matrix=cat_pose.head;
+    m_objs[1].model_matrix=cat_pose.left_eye;
+    m_objs[2].model_matrix=cat_pose.right_eye;
 };
 // 3Dレンダリング、2D描画、imshow
 void App::Render(){
     if (m_showimg.empty()) {
         return;
     }
+    // 3D描画
 	m_showimg=m_zbuf_renderer->draw_scene(m_showimg,m_objs);
+    // ターゲットの描画
     m_target_circle.Draw(m_showimg);
+    // 注目画素の描画
     cv::Point center(
         static_cast<int>(std::round(m_eye_px.x)),
         static_cast<int>(std::round(m_eye_px.y))
     );
-    cv::circle(m_showimg,m_eye_px,m_radius_watch_pt,m_color_watch_pt,-1);
+    cv::circle(m_showimg,m_eye_px,Config::WATCH_PT_RADIUS,Config::WATCH_PT_COLOR,-1);
 
-    // ↓デバッグ用 そのフレームの動きの中心画素と頭の注目画素
-    cv::circle(m_showimg,cv::Point{static_cast<int>(std::round(m_focus_px.x)),
-        static_cast<int>(std::round(m_focus_px.y))},m_radius_watch_pt,cv::Scalar{255,0,0} ,-1);
-    cv::circle(m_showimg,cv::Point{static_cast<int>(std::round(m_head_px.x)),
-        static_cast<int>(std::round(m_head_px.y))},m_radius_watch_pt,cv::Scalar{0,255,0} ,-1);
+    // ↓デバッグ用 そのフレームの動きの中心画素、頭の注目画素の描画
+    // cv::circle(m_showimg,cv::Point{static_cast<int>(std::round(m_focus_px.x)),
+    //     static_cast<int>(std::round(m_focus_px.y))},Config::WATCH_PT_RADIUS,cv::Scalar{255,0,0} ,-1);
+    // cv::circle(m_showimg,cv::Point{static_cast<int>(std::round(m_head_px.x)),
+    //     static_cast<int>(std::round(m_head_px.y))},Config::WATCH_PT_RADIUS,cv::Scalar{0,255,0} ,-1);
     
 	// 画像の表示
 	cv::imshow(m_window_name, m_showimg);

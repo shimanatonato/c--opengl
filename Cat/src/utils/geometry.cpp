@@ -40,15 +40,34 @@ namespace geometry {
     };
 
     // 点から点を見つめる回転行列を作成
-    glm::mat4 create_rot_matrix_look_at(const glm::vec3 from_pt,const glm::vec3 to_pt){
+    glm::mat4 create_rot_matrix_look_at(const glm::vec3 from_pt,const glm::vec3 to_pt,const glm::vec3& up_vec){
         glm::vec3 dir = to_pt-from_pt;
-        
-        // ヨー(Y軸回転)、ピッチ(X軸回転)
-        float yaw   = std::atan2(dir.x, dir.z);
-        float pitch = std::atan2(dir.y, dir.z);
 
-        // 回転行列を返す
-        return geometry::create_rot_matrix_from_arg(yaw, -pitch, 0.0f);
+        // +Z軸（手前）
+        if (glm::dot(dir,dir) < 1e-8f) {
+            return glm::mat4(1.0f);
+        }
+        glm::vec3 forward = glm::normalize(dir);
+        
+        // +X軸（右）
+        glm::vec3 right = glm::cross(up_vec, forward);
+        if (glm::dot(right,right) < 1e-8f) {
+            // forwardとupが平行な場合（真上・真下を向いたとき）
+            right = glm::vec3(1.0f, 0.0f, 0.0f);
+        } else {
+            right = glm::normalize(right);
+        }
+
+        // 補正された+Y軸（上）
+        glm::vec3 real_up = glm::cross(forward, right);
+
+        // 回転基底から行列を作成
+        glm::mat4 rot(1.0f);
+        rot[0] = glm::vec4(right,    0.0f);  // X軸
+        rot[1] = glm::vec4(real_up,  0.0f);  // Y軸
+        rot[2] = glm::vec4(forward,  0.0f);  // Z軸
+        
+        return rot;
     };
 
     // 拡大・縮小の行列の作成
@@ -70,17 +89,11 @@ namespace geometry {
 
     // ビュー行列の作成
     glm::mat4 create_view_matrix(const glm::mat4& rot, const glm::vec3& cam_pos) {
-        glm::mat4 view_rot(1.0f);
-        for (int c = 0; c < 3; ++c) {
-            view_rot[c][0] = rot[c][0];
-            view_rot[c][1] = -rot[c][1];
-            view_rot[c][2] = -rot[c][2];
-        }
-        glm::mat4 view_trans(1.0f);
-        view_trans[3][0] = -cam_pos.x;
-        view_trans[3][1] = -cam_pos.y;
-        view_trans[3][2] = -cam_pos.z;
+        glm::vec3 cam_pos_rotated = -glm::mat3(rot)*cam_pos;
 
-        return view_rot * view_trans;
+        glm::mat4 view_mat = rot;
+        view_mat[3] = glm::vec4(cam_pos_rotated, 1.0f);
+
+        return view_mat;
     };
 }

@@ -10,7 +10,7 @@ namespace geometry {
 	glm::mat4 create_rot_matrix_around(const glm::mat4& rot, const glm::vec3& center);
 
 	// 点から点を見つめる回転行列を作成
-	glm::mat4 create_rot_matrix_look_at(const glm::vec3 from_pt,const glm::vec3 to_pt);
+	glm::mat4 create_rot_matrix_look_at(const glm::vec3 from_pt,const glm::vec3 to_pt,const glm::vec3& up_vec=glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// 拡大・縮小の行列の作成
 	glm::mat4 create_scale_matrix(float scale);
