@@ -22,7 +22,11 @@ bool OpticalFlowPoint::calcPoint(const cv::Mat& prev, const cv::Mat& next, cv::P
 
     // フローの大きさが閾値以上の画素をカウント
     uint count_passed_pix=0;  // 閾値以上の画素数
+
     // フローの大きさを重みとして各画素の座標を加重平均し動きの中心となる画素を探す
+    // フローの大きさが一定以上のもののみ集計
+    // フローの大きさはべき乗することで、動きの大きい画素により引き寄せられるようにする。
+    // フローの大きさが閾値を超える画素が少ない場合はfalseを返す
     float sum_x=0.0f;
     float sum_y=0.0f;
     float weight=0.0f;

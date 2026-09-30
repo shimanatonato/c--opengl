@@ -3,7 +3,7 @@
 
 CatController::CatController(){
     m_offset_center_mat[3] = glm::vec4(-Config::HEAD_CENTER, 1.0f);
-    // 頭の向きを定義
+    // モデルの向きを定義
     m_rot_init = geometry::create_rot_matrix_look_at(
         glm::vec3(0.0f), 
         Config::CAT_HVECT, 
@@ -30,7 +30,6 @@ void CatController::setScale(const float scale){
 };
 
 // モデル行列の計算
-// 各オブジェクトの注目位置は(座標/画像サイズ)で与える
 CatPose CatController::CalcCatPose(const cv::Point2f& head_px, const cv::Point2f& eye_px, const cv::Size& img_size) const{
     // 注目位置を3次元座標に変換
     glm::vec3 head_p3d=PixelTo3D(head_px,img_size);

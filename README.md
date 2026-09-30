@@ -27,7 +27,7 @@ https://github.com/shimanatonato/python-opengl
 
 ### アピールポイント
 オプティカルフローを使うことで、手のトラッキングとは異なり、ペンなどのものにも柔軟に対応することができます。\
-また、カメラのフレーム取得をメイン処理とは独立したスレッドで行うことで、カメラのフレームレートがボトルネックにならないようにしています。
+また、カメラのフレーム取得をメイン処理とは独立したスレッドで行うことで、カメラの読み込み待ちによるフレームレート低下を防止しています。
 
 ## 技術説明
 ### 開発・動作環境
@@ -50,12 +50,31 @@ https://github.com/shimanatonato/python-opengl
 - **GLAD**: OpenGL 4.6 Core Profile Loader
 - **tinyobjloader v2.0**: OBJファイル読み込み (MIT License)
 
+### 1. ビルド済みバイナリをすぐに実行する場合
+`bin/` フォルダ内の `Cat.exe` を実行してください。\
+※ 必要な DLL (`opencv_world4120.dll`) およびアセット類（`data/`, `src/graphics/`）は `bin/` 内に同梱されています。
+
+### 2. Visual Studio からビルドする場合
+1. Visual Studio 2022 で `Cat.sln` を開きます。
+2. 以下の外部ライブラリのインクルードパス・ライブラリパスを設定してください。
+   - **OpenCV 4.12.0** (`opencv_world4120.lib` / `opencv_world4120d.lib`)
+   - **GLFW 3.4** (`glfw3.lib`)
+   - **GLM 1.0** (ヘッダーのみのためインクルードパスのみ)\
+   ※ GLAD や tinyobjloader などの同梱ライブラリ（`libraries/` 配下）のパスはプロジェクト設定に含まれているため、手動設定は不要です。
+3. ビルド構成を `Release` / `x64` (または `Debug` / `x64`) に設定し、ビルドを実行します。
+
 ## ファイル構成
 ```text
 Cat
 |   .gitignore
 |   Cat.sln         // Visual Studioプロジェクトファイル
 |   README.md       // 本ファイル
+|
++---bin             // 実行用パッケージ（ダブルクリックで起動可能）
+|       Cat.exe
+|       opencv_world4120.dll
+|       data/
+|       src/graphics/
 |
 +---Cat
 |   |   Cat.vcxproj                 // Visual Studio設定

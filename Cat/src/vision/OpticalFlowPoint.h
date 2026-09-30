@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include "src/config.h"
 
+// オプティカルフローから動きの中心となる画素を計算
 class OpticalFlowPoint
 {
     private:
@@ -19,8 +20,9 @@ class OpticalFlowPoint
         double m_poly_sigma = 1.2;  // polySigma    : ガウス分布の標準偏差(polyN=5 ならば polySigma=1.1あたり)    
     public:
         OpticalFlowPoint()=default;
+
         // 前後のフレーム間での動きの中心画素を探す
-        // 動きが大きい場合は見つかった中心画素を出力
+        // 動きが大きい場合はtrueを返し見つかった中心画素を出力
         // 動きが小さい場合はfalseを返す
         bool calcPoint(const cv::Mat& prev, const cv::Mat& next, cv::Point2f& tgt);
 };

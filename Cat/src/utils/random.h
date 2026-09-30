@@ -1,6 +1,7 @@
 #pragma once
 #include <random>
 
+// ランダム関数
 namespace random{
     // 整数乱数を返す
     inline int RandInt(const int a, const int b){

@@ -1,4 +1,3 @@
-// TinyObjLoaderによるファイルの読み込み処理
 // TinyObjLoaderのためにC++のバージョンはv.17に設定
 #pragma once
 
@@ -9,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 
+// TinyObjLoaderによるファイルの読み込み処理
 namespace load_file {
 
     // 頂点情報用の構造体
@@ -17,7 +17,7 @@ namespace load_file {
         glm::vec3 normal;
         glm::vec3 color;
 
-        // 頂点が完全一致するか判定する演算子 (tiny)
+        // 頂点が完全一致するか判定する演算子
         bool operator==(const Vertex& other) const {
             return position == other.position &&
                    normal   == other.normal &&

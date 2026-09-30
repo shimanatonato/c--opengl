@@ -101,7 +101,7 @@ void VideoCaptureWrapper::Update(){
         }
         m_cond.notify_one();
 
-        // 読み込み感覚の残り時間分待機
+        // 読み込み間隔の残り時間分待機
         if(m_is_video){
             auto t_end = std::chrono::steady_clock::now();
             std::chrono::duration<double, std::milli> t_elapsed = t_end-t_start;

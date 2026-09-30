@@ -10,16 +10,15 @@
 namespace Config {
 	// 動作モード定義
 	enum class Mode : int {
-		Video=0,
-		Camera=1,
-		Mouse=2,
+		Video=0,  // デフォルトの動画読み込み
+		Camera=1,  // カメラ起動
+		Mouse=2,  // マウス操作
 		Count 
 	};
 
 	inline const std::string WINDOW_NAME = "window";  // ウィンドウ名
 	inline constexpr int CAMERA_NUMBER = 0;  // 起動するカメラ
 	
-	inline constexpr int MODE_DEFAULT = 0;  // デフォルト動作モード（0:デフォルトの動画読み込み, 1:カメラ起動, 2:マウス操作）
 	// カメラなしの場合のデフォルト値
 	inline constexpr int WIDTH_DEFAULT = 600;  // 画像サイズ
 	inline constexpr int HEIGHT_DEFAULT = 400;
@@ -49,9 +48,9 @@ namespace Config {
 	// カメラ座標系: +X右, +Y上, +Z手前
 	// ビュー行列（外部パラメータ）
 	inline const glm::vec3 CAMERA_POSITION{0.0f,0.0f,1000.0f};  // カメラ位置
-	inline constexpr float CAMERA_H = 0.0f;  // カメラの回転（ロール・ピッチ・ヨー）
-	inline constexpr float CAMERA_P = 0.0f;  // カメラの回転（ロール・ピッチ・ヨー）
-	inline constexpr float CAMERA_R = 0.0f;  // カメラの回転（ロール・ピッチ・ヨー）
+	inline constexpr float CAMERA_YAW = 0.0f;  // カメラのX軸回転（ヨー）
+	inline constexpr float CAMERA_PITCH = 0.0f;  // カメラのY軸回転（ピッチ）
+	inline constexpr float CAMERA_ROLL = 0.0f;  // カメラのZ軸回転（ロール）
 	// 投影行列（内部パラメータ）
 	inline constexpr float FOCAL = 35.0f;  // 焦点距離(単位:mm)
 	inline constexpr float PIXEL_WIDTH = 3.45f / 1000.0f * 4.0f; // 画素のサイズ

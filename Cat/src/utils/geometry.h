@@ -1,7 +1,7 @@
-// 3D処理関数
 #pragma once
 #include <glm/glm.hpp>
 
+// 3D処理関数
 namespace geometry {
 	// 回転角度から回転行列を作成（入力：ヨー・ピッチ・ロール）
 	glm::mat4 create_rot_matrix_from_arg(float y, float p, float r);

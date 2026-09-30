@@ -152,7 +152,7 @@ bool App::InitResources(){
 	);
 
 	// ビュー行列（カメラ外部パラメータ）
-	glm::mat4 camera_rot = geometry::create_rot_matrix_from_arg(Config::CAMERA_H, Config::CAMERA_P, Config::CAMERA_R);
+	glm::mat4 camera_rot = geometry::create_rot_matrix_from_arg(Config::CAMERA_YAW, Config::CAMERA_PITCH, Config::CAMERA_ROLL);
 	m_view_mat = geometry::create_view_matrix(camera_rot, Config::CAMERA_POSITION);
 
     m_zbuf_renderer->set_camera(m_proj_mat, m_view_mat);

@@ -3,7 +3,7 @@
 #include <string>
 #include <atomic>
 
-// マウス位置の取得
+// マウス位置の取得クラス
 class MouseInput{
     private:
         // 現在のマウス座標
