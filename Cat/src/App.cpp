@@ -46,7 +46,7 @@ void App::SelectMode(){
 // カメラパラメータ、OBJモデル、ウィンドウ、ターゲット情報の初期化
 bool App::InitResources(){
     // IPPの例外発生を防止
-    cv::ipp::setUseIPP(false);
+    // cv::ipp::setUseIPP(false);
 
     // =====動画・カメラの読み込み=====
     if (m_is_use_capture){
@@ -165,17 +165,17 @@ void App::ProcessInput(){
     if(m_is_use_capture){
         // 新規取得フレームがある場合のみ読み込み
         if(m_video_capture && m_video_capture->IsReady()){
-            bool is_read=m_video_capture->Read(m_showimg);
-            if (!is_read||m_showimg.empty() || m_showimg.cols==0 || m_showimg.rows==0) {
+            bool is_read=m_video_capture->Read(m_raw_frame);
+            if (!is_read||m_raw_frame.empty() || m_raw_frame.cols==0 || m_raw_frame.rows==0) {
                 return;
             }
 
             // カメラの場合反転（インカメラ想定）
             if(m_mode==Config::Mode::Camera){
-                cv::flip(m_showimg, m_showimg, 1);
+                cv::flip(m_raw_frame, m_raw_frame, 1);
             }
             // グレースケールに変換
-            cv::cvtColor(m_showimg,m_fullimg_gray,cv::COLOR_BGR2GRAY);
+            cv::cvtColor(m_raw_frame,m_fullimg_gray,cv::COLOR_BGR2GRAY);
             // リサイズして処理負荷軽減
             cv::resize(m_fullimg_gray,m_nextimg_gray,{0,0},1.0f/Config::OPTFLOW_SCALE,1.0f/Config::OPTFLOW_SCALE);
             // 最初のフレームは前フレーム画像の代わりに同じ画像を使用
@@ -195,7 +195,7 @@ void App::ProcessInput(){
         // 動きの中心画素をマウス位置に設定
         m_focus_px={static_cast<float>(m_mouse_input.GetX()), static_cast<float>(m_mouse_input.GetY())};
         // 背景画像を設定
-        m_showimg=cv::Mat{m_image_size.height, m_image_size.width, CV_8UC3, Config::BG_COLOR_DEFOULT};
+        m_raw_frame=cv::Mat{m_image_size.height, m_image_size.width, CV_8UC3, Config::BG_COLOR_DEFOULT};
     }
     
 };
@@ -214,9 +214,10 @@ void App::Update(float dt){
 };
 // 3Dレンダリング、2D描画、imshow
 void App::Render(){
-    if (m_showimg.empty()) {
+    if (m_raw_frame.empty()) {
         return;
     }
+    m_raw_frame.copyTo(m_showimg);
     // 3D描画
 	m_showimg=m_zbuf_renderer->draw_scene(m_showimg,m_objs);
     // ターゲットの描画

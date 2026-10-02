@@ -39,6 +39,7 @@ class App{
         std::vector<Mesh> m_meshes;  // 3Dメッシュ
         std::vector<RenderObject> m_objs;  // 3Dメッシュとモデル行列の対応
 
+        cv::Mat m_raw_frame;  // 今フレームの各処理前の画像
         cv::Mat m_previmg_gray;  // 前フレームの画像（グレースケール）
         cv::Mat m_fullimg_gray;  // 今フレームのリサイズ前の画像（グレースケール）
         cv::Mat m_nextimg_gray;  // 今フレームの画像（グレースケール）
@@ -67,6 +68,9 @@ class App{
 
             // 時間計測の初期化
             auto last_time = std::chrono::high_resolution_clock::now();
+            int frame_sum = 0;
+            float time_sum = 0.0f;
+            float display_fps = 0.0f;
 
             // メインループ
             while (!m_is_exit) {
@@ -81,6 +85,16 @@ class App{
                 Update(dt);  // 処理
                 Render();  // 出力
 
+                // デバッグ用 フレームレート出力
+                /* frame_sum++;
+                time_sum+=dt;
+                if (time_sum >= 0.5f) {
+                    display_fps = static_cast<float>(frame_sum) / time_sum;
+                    time_sum = 0.0f;
+                    frame_sum = 0;
+                    std::cout << "\rFPS: " << std::fixed << std::setprecision(1) <<  display_fps <<"   " << std::flush;
+                }  */              
+
                 // キー入力判定
                 // ESCキー（27）が押されたらループを抜ける
                 int key = cv::waitKey(1);
@@ -88,6 +102,7 @@ class App{
                     m_is_exit = true;
                 }
             }
+            std::cout << std::endl;
         };
         // モード選択
         void SelectMode();
